@@ -1,0 +1,63 @@
+{
+  "name": "tfm-cancel-orders",
+  "version": "1.0.0",
+  "description": "dApp to cancel missing limit orders on TFM (on Osmosis)",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "use-these": "########## USE THESE: ##########",
+    "compile": "npm run build-rm-github-pages & npm run build-rm-dist & npm run dev-rm-preview & npm-run-all --parallel build-html build-bundle-js build-service-worker build-css build-images build-json & npm run build-github-pages",
+    "dev": "npm run dev-compile && concurrently -c \"auto\" npm:service-*",
+    "dont-use": "########## DON'T USE THESE: ##########",
+    "build-bundle-js": "browserify -t [ babelify --presets [ @babel/preset-env ] ] src/index.js -o dist/bundle.js -s module",
+    "build-service-worker": "xcopy /E /Y \".\\src\\service-worker.js\" \".\\dist\\\"",
+    "build-css": "xcopy /E /Y \".\\src\\styles\\\" \".\\dist\\styles\\\" ",
+    "build-html": "xcopy /E /Y \".\\src\\*.html\" \".\\dist\\\" ",
+    "build-images": "xcopy /E /Y \".\\src\\images\\\" \".\\dist\\images\\\" && xcopy /E /Y \".\\src\\favicon.ico\" \".\\dist\\\"",
+    "build-json": "xcopy /E /Y \".\\src\\*.json\" \".\\dist\\\" ",
+    "build-rm-dist": "rmdir /s /q dist",
+    "build-github-pages": "xcopy /E /Y \".\\dist\\\" \".\\docs\\\"",
+    "build-rm-github-pages": "rmdir /s /q docs",
+    "dev-bundle-js": "browserify -t [ babelify --presets [ @babel/preset-env ] ] src/index.js -o preview/bundle.js -s module",
+    "dev-service-worker": "xcopy /E /Y \".\\src\\service-worker.js\" \".\\preview\\\"",
+    "dev-css": "xcopy /E /Y \".\\src\\styles\\\" \".\\preview\\styles\\\"",
+    "dev-html": "xcopy /E /Y \".\\src\\*.html\" \".\\preview\\\"",
+    "dev-images": "xcopy /E /Y \".\\src\\images\\\" \".\\preview\\images\\\" && xcopy /E /Y \".\\src\\favicon.ico\" \".\\preview\\\"",
+    "dev-json": "xcopy /E /Y \".\\src\\*.json\" \".\\preview\\\"",
+    "dev-rm-preview": "rmdir /s /q preview",
+    "dev-compile": "npm run dev-rm-preview & npm-run-all --parallel dev-html dev-bundle-js dev-service-worker dev-css dev-images dev-json",
+    "service-watch": "concurrently -c \"auto\" npm:watch-*",
+    "watch-html": "nodemon --watch \"src\" --ext \"html\" --exec \"npm run dev-html\"",
+    "watch-js": "nodemon --watch \"src\" --ext \"js\" --exec \"npm run dev-bundle-js\"",
+    "watch-css": "nodemon --watch \"src\" --ext \"css\" --exec \"npm run dev-css\"",
+    "service-serve": "http-server ./preview -p 80 -c-1 || exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jasbanza/tfm-cancel-orders.git"
+  },
+  "keywords": [
+    "tfm",
+    "Osmosis",
+    "dapp"
+  ],
+  "author": "jasbanza",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jasbanza/tfm-cancel-orders/issues"
+  },
+  "homepage": "https://github.com/jasbanza/tfm-cancel-orders#readme",
+  "dependencies": {
+    "osmojs": "^16.5.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.22.20",
+    "babelify": "^10.0.0",
+    "browserify": "^17.0.0",
+    "concurrently": "^8.2.1",
+    "http-server": "^14.1.1",
+    "nodemon": "^3.0.1",
+    "npm-run-all": "^4.1.5"
+  }
+}

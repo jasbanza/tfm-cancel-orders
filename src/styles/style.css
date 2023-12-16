@@ -1,0 +1,157 @@
+* {
+  font-family: "Arial", sans-serif;
+}
+
+.hidden {
+  display: none !important;
+}
+
+header {
+  padding: 20px;
+  background-color: #f2f2f2;
+}
+
+header a {
+  color: #333;
+  text-decoration: none;
+}
+
+header a:hover {
+  text-decoration: underline;
+}
+.orders {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.order {
+  border: 1px solid #2f2f2f;
+  margin: 10px;
+  padding: 10px;
+  width: calc(33% - 20px);
+}
+.cancel-button {
+  color: white;
+  background-color: darkred !important;
+  margin:5px !important;
+  padding: 5px !important;
+  cursor: pointer;
+}
+.cancel-button:hover {
+  background-color: red !important;
+}
+
+.button {
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+#btnDisconnect {
+  background-color: darkred;
+}
+#btnConnect {
+  background-color: #8800ffd7;
+}
+
+.container {
+  background-color: #ccc;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.container > div {
+  margin: 10px;
+}
+
+#walletAddress {
+  font-size: 14pt;
+  font-weight: bold;
+}
+
+.mask {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+#modalTitle {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+#modalMessage {
+  font-size: 1.2em;
+  margin-bottom: 20px;
+}
+
+.console {
+  background-color: #000;
+  color: #0f0;
+  padding: 10px;
+  font-family: monospace;
+  white-space: pre-wrap;
+  overflow: auto;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  width: 100%;
+  height: 150px;
+  max-height: 50vh;
+}
+/* footer at the bottom of the page: */
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #f2f2f2;
+  color: #333;
+  text-align: center;
+  padding: 10px;
+  
+  font-size: 12px;
+}
+
+.spinner {
+  border: 16px solid #f3f3f3;
+  border-top: 16px solid #3498db;
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
