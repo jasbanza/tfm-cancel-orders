@@ -44,17 +44,6 @@
         Search
       </div>
     </div>
-    <div id="custom-order" class="container">
-      <div>Custom Order ID:</div>
-      <input id="orderId" type="text" />
-      <button
-        id="btnCancel"
-        class="button cancel-button"
-        onclick="btnCancelCustomOrder()"
-      >
-        Cancel Order
-      </button>
-    </div>
     <div id="walletContainer" class="hidden container">
       <!-- connected wallet -->
       <div>Connected Wallet:</div>
@@ -70,6 +59,17 @@
     </div>
 
     <div id="orders" class="orders container"></div>
+    <div id="custom-order" class="container">
+      <div>Custom Order ID:</div>
+      <input id="orderId" type="text" />
+      <button
+        id="btnCancel"
+        class="button cancel-button"
+        onclick="btnCancelCustomOrder()"
+      >
+        Cancel Order
+      </button>
+    </div>
     <div id="responseContainer" class="console hidden">
       Response:
       <div id="divResponse"></div>
