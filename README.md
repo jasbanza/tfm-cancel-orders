@@ -40,7 +40,7 @@ npm run dev
 npm run compile
 ```
 
-Bundles js for browser, outputs to:
+- Bundles js for browser, outputs to:
 
-- ./dist (included in .gitignore)
-- ./docs (use for github pages)
+  - ./dist (included in .gitignore)
+  - ./docs (use for github pages)
