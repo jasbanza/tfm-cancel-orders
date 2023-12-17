@@ -309,7 +309,6 @@ async function ui_setWallet(wallet) {
     document.getElementById("walletAddress").innerHTML = wallet.bech32Address;
     ui_showElementById("walletContainer");
     ui_showElementById("orders");
-    ui_showElementById("custom-order");
     ui_hideElementById("btnConnect");
 
     await loadOrders(wallet.bech32Address);
@@ -317,7 +316,6 @@ async function ui_setWallet(wallet) {
   } else {
     ui_hideElementById("walletContainer");
     ui_hideElementById("orders");
-    ui_hideElementById("custom-order");
     ui_showElementById("btnConnect");
   }
   ui_reinitialize();
