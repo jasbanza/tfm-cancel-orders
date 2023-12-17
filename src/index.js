@@ -2,9 +2,14 @@ import { cosmwasm, FEES, getSigningOsmosisClient, getSigningCosmwasmClient } fro
 const { executeContract } = cosmwasm.wasm.v1.MessageComposer.withTypeUrl;
 const { MsgExecuteContract } = cosmwasm.wasm.v1;
 
-const restUrl = "https://rest-osmosis.ecostake.com";
+// const restEndpoint = "https://osmosis-api.reece.sh";
+const restEndpoint = "https://rest-osmosis.ecostake.com";
+
+const rpcEndpoint = "https://rpc.osmosis.zone:443";
+const contractAddress = "osmo1rqamy6jc3f0rwrg5xz8hy8q7n932t2488f2gqg3d0cadvd3uqaxq4wazn8";
 
 navigator.serviceWorker.register("service-worker.js");
+
 
 
 (async () => {
@@ -19,7 +24,6 @@ navigator.serviceWorker.register("service-worker.js");
   if (orderId) {
     document.getElementById("orderId").value = orderId;
   }
-
 })();
 
 // // INITIALIZATION:
@@ -67,10 +71,14 @@ async function getOsmosisWallet() {
 
 // EVENT HANDLERS
 async function keplr_chains_onConnected() {
+  // const customAddress = document.getElementById("customAddress").value;
+  // if (customAddress && customAddress.length >= 43 && customAddress.startsWith("osmo")) {
+  //   ui_setWallet({ bech32Address: customAddress });
+  // }
+  // else {
   const wallet = await getOsmosisWallet();
   ui_setWallet(wallet);
-
-
+  // }
   // register event handler: if user changes account:
   window.addEventListener("keplr_keystorechange", keplr_keystore_onChange);
 }
@@ -97,7 +105,7 @@ export async function btnConnectKeplr_onClick() {
 async function loadOrders(walletAddress) {
   try {
     ui_showLoadingMask({ modalMessage: "Please Wait...", modalTitle: "Fetching Created Orders" });
-    const responseCreated = await fetch(`${restUrl}/cosmos/tx/v1beta1/txs?events=message.sender='${walletAddress}'&events=message.action='/cosmwasm.wasm.v1.MsgExecuteContract'&events=wasm._contract_address='osmo1wg5qzw6yn88yz9kxtwvs36fmq5jxa03pg6zptvgte62hrlw0c4rqc9mjtf'&events=wasm.action='create_request'`)
+    const responseCreated = await fetch(`${restEndpoint}/cosmos/tx/v1beta1/txs?events=message.sender='${walletAddress}'&events=message.action='/cosmwasm.wasm.v1.MsgExecuteContract'&events=wasm._contract_address='${contractAddress}'&events=wasm.action='submit_order'`)
     const dataCreated = await responseCreated.json();
 
 
@@ -107,12 +115,7 @@ async function loadOrders(walletAddress) {
       for (const tx_response of dataCreated.tx_responses) {
         for (const event of tx_response.logs[0].events) {
           if (event.type === "wasm") {
-            for (const attribute of event.attributes) {
-              if (attribute.key === "id") {
-                const orderId = attribute.value;
-                createdOrders.push(orderId);
-              }
-            }
+            createdOrders.push(event.attributes);
           }
         }
       }
@@ -122,43 +125,63 @@ async function loadOrders(walletAddress) {
     ui_showLoadingMask({ modalMessage: "Please Wait...", modalTitle: "Fetching Closed Orders" });
 
     //build array of cancelled orders
-    const responseCancelled = await fetch(`${restUrl}/cosmos/tx/v1beta1/txs?events=message.sender='${walletAddress}'&events=message.action='/cosmwasm.wasm.v1.MsgExecuteContract'&events=wasm._contract_address='osmo1wg5qzw6yn88yz9kxtwvs36fmq5jxa03pg6zptvgte62hrlw0c4rqc9mjtf'&events=wasm.action='cancel_request'`)
+    const responseCancelled = await fetch(`${restEndpoint}/cosmos/tx/v1beta1/txs?events=message.sender='${walletAddress}'&events=message.action='/cosmwasm.wasm.v1.MsgExecuteContract'&events=wasm._contract_address='${contractAddress}'&events=wasm.action='cancel_order'`)
     const dataCancelled = await responseCancelled.json();
 
-    // loop through and remove cancelled orders from created orders
+    // build array of cancelled orders
     let cancelledOrders = [];
     if (dataCancelled?.tx_responses?.length >= 0) {
       for (const tx_response of dataCancelled.tx_responses) {
         for (const event of tx_response.logs[0].events) {
           if (event.type === "wasm") {
-            for (const attribute of event.attributes) {
-              if (attribute.key === "id") {
-                const orderId = attribute.value;
-                cancelledOrders.push(orderId);
-              }
-            }
+            cancelledOrders.push(event.attributes);
           }
         }
       }
     }
 
-    // remove cancelled orders from created orders
-    createdOrders = createdOrders.filter(order => !cancelledOrders.includes(order));
+    // filter out cancelled orders
+    let openOrders = createdOrders.filter(createdOrder => {
+      return !cancelledOrders.some(cancelledOrder => {
+        return createdOrder.order_id === cancelledOrder.order_id;
+      });
+    });
+
 
     // display open orders
     const ordersDiv = document.getElementById('orders');
-    if (createdOrders.length === 0) {
+    if (openOrders.length === 0) {
       ordersDiv.innerHTML = "No Orders Found";
       return;
     }
     ordersDiv.innerHTML = "";
-    createdOrders.forEach(order => {
+    openOrders.forEach(order => {
       const orderDiv = document.createElement('div');
       orderDiv.className = 'order';
-      orderDiv.dataset.id = order;
+      const orderMap = {};
+      order.forEach(obj => {
+        orderMap[obj.key] = obj.value;
+      });
+
+      const order_id = orderMap['order_id'];
+      const offer_amount = orderMap['offer_amount'];
+      const ask_amount = orderMap['ask_amount'];
+      const offer_asset = orderMap['offer_asset'];
+      const ask_asset = orderMap['ask_asset'];
+      const expiration_time = orderMap['expiration_time'];
+      const expiration_time_human = new Date(expiration_time * 1000).toLocaleString();
+      const created_time = orderMap['created_time'];
+      const created_time_human = new Date(created_time * 1000).toLocaleString();
+      orderDiv.dataset.id = order_id;
       orderDiv.innerHTML = `
-        <p>Order ID: ${order}</p>
-        <div class="cancel-button" onclick="cancelOrder(${order})">Cancel Order</div>
+      <div><div>Order ID:</div> <div>${order_id}</div></div>
+      <div><div>Offer Asset:</div> <div>${offer_asset}</div></div>
+      <div><div>Offer Amount:</div> <div>${offer_amount}</div></div>
+      <div><div>Ask Asset:</div> <div>${ask_asset}</div></div>
+      <div><div>Ask Amount:</div> <div>${ask_amount}</div></div>
+      <div><div>Expiration Time:</div> <div>${expiration_time_human}</div></div>
+      <div><div>Created Time:</div> <div>${created_time_human}</div></div>
+      <div class="flex-justify-center"><button class="button cancel-button" onclick="cancelOrder(${order_id})">Cancel Order</button></div>
       `;
       ordersDiv.appendChild(orderDiv);
     });
@@ -180,7 +203,7 @@ async function cancelOrder(orderId) {
       });
 
       const client = await getSigningCosmwasmClient({
-        rpcEndpoint: "https://rpc.osmosis.zone:443",
+        rpcEndpoint: rpcEndpoint,
         signer: offlineSigner,
       });
 
@@ -200,8 +223,8 @@ async function cancelOrder(orderId) {
       // const { MsgExecuteContract } = cosmwasm.wasm.v1;
       const msgExecuteContract = MsgExecuteContract.fromAmino({
         "sender": walletAddress,
-        "contract": "osmo1wg5qzw6yn88yz9kxtwvs36fmq5jxa03pg6zptvgte62hrlw0c4rqc9mjtf",
-        "msg": { "cancel_request": { "id": orderId } },
+        "contract": contractAddress,
+        "msg": { "cancel_order": { "order_id": orderId } },
         "funds": []
       });
 
@@ -228,6 +251,8 @@ window.cancelOrder = cancelOrder;
 window.btnDisconnectWallet = btnDisconnectWallet;
 window.btnConnectWallet = btnConnectWallet;
 window.btnCancelCustomOrder = btnCancelCustomOrder;
+window.btnSearchCustomAddress = btnSearchCustomAddress;
+
 
 
 function btnCancelCustomOrder() {
@@ -286,7 +311,7 @@ async function ui_setWallet(wallet) {
     ui_showElementById("orders");
     ui_showElementById("custom-order");
     ui_hideElementById("btnConnect");
- 
+
     await loadOrders(wallet.bech32Address);
 
   } else {
@@ -310,6 +335,20 @@ function btnDisconnectWallet() {
 
 function btnConnectWallet() {
   btnConnectKeplr_onClick();
+}
+
+function btnSearchCustomAddress() {
+  const customAddress = document.getElementById("customAddress").value;
+  if (customAddress && customAddress.length >= 43 && customAddress.startsWith("osmo")) {
+    btnDisconnectWallet();
+    ui_setWallet({ bech32Address: customAddress });
+  } else {
+    ui_showError("Invalid Wallet Address");
+  }
+}
+
+function setCustomAddress(address) {
+  document.getElementById("customAddress").value = address;
 }
 
 function ui_removeOrder(orderId) {

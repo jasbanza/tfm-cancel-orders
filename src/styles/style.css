@@ -19,6 +19,13 @@ header a {
 header a:hover {
   text-decoration: underline;
 }
+
+#customAddress {
+  width: 47ch;
+  font-family: monospace;
+  text-align: center;
+}
+
 .orders {
   display: flex;
   flex-wrap: wrap;
@@ -29,12 +36,40 @@ header a:hover {
   border: 1px solid #2f2f2f;
   margin: 10px;
   padding: 10px;
-  width: calc(33% - 20px);
+  max-width: 400px;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.order div {
+  display: flex;
+  justify-content: left;
+  width: 100%;
+}
+
+.order div.flex-justify-center {
+  display: flex;
+  justify-content: center;
+}
+
+.order div div:first-child {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.order div div:last-child {
+  overflow-wrap: anywhere;
+}
+
 .cancel-button {
   color: white;
   background-color: darkred !important;
-  margin:5px !important;
+  margin: 5px !important;
   padding: 5px !important;
   cursor: pointer;
 }
@@ -77,6 +112,7 @@ header a:hover {
 #walletAddress {
   font-size: 14pt;
   font-weight: bold;
+  font-family: monospace;
 }
 
 .mask {
@@ -135,7 +171,7 @@ header a:hover {
   color: #333;
   text-align: center;
   padding: 10px;
-  
+
   font-size: 12px;
 }
 

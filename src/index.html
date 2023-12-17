@@ -3,13 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cancel Autoswap by jasbanza</title>
+    <title>Cancel TFM Orders by jasbanza</title>
     <script src="bundle.js"></script>
     <link rel="stylesheet" href="styles/style.css" />
     <script>
-      navigator.serviceWorker.register(
-        "service-worker.js"
-      );
+      navigator.serviceWorker.register("service-worker.js");
     </script>
     <link rel="icon" href="favicon.ico" />
   </head>
@@ -23,22 +21,46 @@
       </div>
     </div>
     <header>
-      <h1>Cancel Autoswap</h1>
+      <h1>Cancel TFM Orders</h1>
       <h3>
-        <a
-          href="https://github.com/jasbanza/autoswap-cancel-orders"
-          target="_blank"
+        <a href="https://github.com/jasbanza/tfm-cancel-orders" target="_blank"
           >View on GitHub</a
         >
       </h3>
     </header>
     <br /><br />
+    <div id="custom-address" class="container">
+      <div>Search Custom Address:</div>
+      <input
+        id="customAddress"
+        type="text"
+        placeholder="(Read-only unless it's your wallet)"
+      />
+      <div
+        id="btnSearchCustomAddress"
+        class="button"
+        onclick="btnSearchCustomAddress()"
+      >
+        Search
+      </div>
+    </div>
+    <div id="custom-order" class="container">
+      <div>Custom Order ID:</div>
+      <input id="orderId" type="text" />
+      <button
+        id="btnCancel"
+        class="button cancel-button"
+        onclick="btnCancelCustomOrder()"
+      >
+        Cancel Order
+      </button>
+    </div>
     <div id="walletContainer" class="hidden container">
       <!-- connected wallet -->
       <div>Connected Wallet:</div>
       <div id="walletAddress"></div>
       <div id="btnDisconnect" class="button" onclick="btnDisconnectWallet()">
-        Disconnect Keplr
+        Disconnect Wallet
       </div>
     </div>
     <div class="container">
@@ -47,30 +69,7 @@
       </div>
     </div>
 
-    <!-- flex for interface -->
-    <div
-      style="display: flex; flex-direction: row; justify-content: space-between"
-    >
-      <!-- left side -->
-      <div style="width: 45%">
-        <div id="orders" class="orders container"></div>
-      </div>
-      <!-- right side -->
-      <div style="width: 45%">
-        <!-- input text field to enter a custom order id -->
-        <div id="custom-order" class="container">
-          <div>Order ID:</div>
-          <input id="orderId" type="text" />
-          <button
-            id="btnCancel"
-            class="button cancel-button"
-            onclick="btnCancelCustomOrder()"
-          >
-            Cancel Order
-          </button>
-        </div>
-      </div>
-    </div>
+    <div id="orders" class="orders container"></div>
     <div id="responseContainer" class="console hidden">
       Response:
       <div id="divResponse"></div>
@@ -84,8 +83,8 @@
       order if they can't find it themselves.
       <br />
       e.g.
-      <a href="https://jasbanza.github.io/autoswap-cancel-orders/?id=123"
-        >https://jasbanza.github.io/autoswap-cancel-orders/?id=123</a
+      <a href="/?id=123"
+        >https://jasbanza.github.io/tfm-cancel-orders/?id=123</a
       >
     </div>
   </body>
