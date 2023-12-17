@@ -235,7 +235,7 @@ async function cancelOrder(orderId) {
       try {
         ui_hideResponse();
         ui_hideError();
-        const result = await client.signAndBroadcast(walletAddress, [msg], gasFee, "by https://jasbanza.github.io/autoswap-cancel-orders");
+        const result = await client.signAndBroadcast(walletAddress, [msg], gasFee, "by https://jasbanza.github.io/tfm-cancel-orders");
         ui_showResponse(result);
         ui_removeOrder(orderId);
       } catch (error) {
